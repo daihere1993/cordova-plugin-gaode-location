@@ -1,11 +1,29 @@
 {
   "name": "cordova-plugin-gaode-location",
-  "version": "1.0.0",
-  "description": "A cordova plugin that is gaode map location",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+  "version": "1.6.4",
+  "description": "基于cordova封装的高德地图定位插件",
+  "cordova": {
+    "id": "cordova-plugin-gaode-location",
+    "platforms": [
+      "ios",
+      "android"
+    ]
   },
-  "author": "",
-  "license": "ISC"
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/daihere1993/corodva-plugin-gaode-location"
+  },
+  "keywords": [
+    "cordova",
+    "plugin",
+    "gaode",
+    "amap",
+    "location"
+  ],
+  "author": "daihere1993 <daihere1993@gmail.com>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/daihere1993/cordova-plugin-gaode-location/issues"
+  },
+  "homepage": "https://github.com/daihere1993/cordova-plugin-gaode-location#readme"
 }
