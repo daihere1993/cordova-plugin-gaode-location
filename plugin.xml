@@ -1,0 +1,82 @@
+<?xml version='1.0' encoding='utf-8'?>
+<plugin id="cordova-plugin-gaode-location" version="1.0.0" xmlns="http://apache.org/cordova/ns/plugins/1.0" xmlns:android="http://schemas.android.com/apk/res/android">
+    <name>cordova-plugin-gaode-location</name>
+    <preference name="ANDROIDKEY" />
+    <preference name="IOSKEY" />
+    <js-module name="cordova-plugin-gaode-location" src="www/cordova-plugin-gaode-location.js">
+        <clobbers target="GaodeLocation" />
+    </js-module>
+
+    <!-- android -->
+    <platform name="android">
+        <config-file target="res/xml/config.xml" parent="/*">
+            <feature name="GaodeLocation">
+                <param name="android-package" value="daihere.cordova.plugin.GaodeLocation"/>
+            </feature>
+            <preference name="ANDROIDKEY" value="$ANDROIDKEY" />
+        </config-file>
+        <config-file target="AndroidManifest.xml" parent="/*">
+            <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+            <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+            <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+            <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+            <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
+            <uses-permission android:name="android.permission.INTERNET" />
+            <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+            <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+        </config-file>
+        <config-file target="AndroidManifest.xml" parent="/manifest/application">
+            <service android:name="com.amap.api.location.APSService"></service>
+            <meta-data android:name="com.amap.api.v2.apikey" android:value="$ANDROIDKEY"></meta-data>
+        </config-file>
+
+        <!-- Plugin souce code -->
+        <source-file src="src/android/GaodeLocation.java" target-dir="src/daihere/cordova/plugin" />
+
+        <!-- Gaode skd -->
+        <source-file src="src/android/libs/Gaode_Location_SDK_V3.5.0.jar" target-dir="libs"/>
+    </platform>
+
+    <!-- iOS -->
+    <platform name="ios">
+        <config-file parent="/*" target="config.xml">
+            <feature name="GaodeLocation">
+                <param name="ios-package" value="CDVGaodeLocation"/>
+                <param name="onload" value="true"/>
+            </feature>
+            <preference name="IOSKEY" value="$IOSKEY" />
+        </config-file>
+
+        <config-file target="*-Info.plist" parent="CFBundleURLTypes">
+            <array>
+                <dict>
+                    <key>CFBundleURLName</key>
+                    <string>iosKey</string>
+                    <key>CFBundleURLSchemes</key>
+                    <array>
+                        <string>$IOSKEY</string>
+                    </array>
+                </dict>
+            </array>
+        </config-file>
+
+        <!-- Plugin source code -->
+        <header-file src="src/ios/CDVGaodeLocation.h" />
+        <source-file src="src/ios/CDVGaodeLocation.m" />
+
+        <!-- Gaode sdk -->
+        <framework src="src/ios/libs/AMapLocationKit.framework" custom="true" />
+        <framework src="src/ios/libs/AMapFoundationKit.framework" custom="true" />
+
+        <!-- System framework -->
+        <framework src="SystemConfiguration.framework" />
+        <framework src="CoreTelephony.framework" />
+        <framework src="libz.tbd" />
+        <framework src="libstdc++.6.0.9.tbd" />
+        <framework src="libc++.tbd" />
+        <framework src="JavaScriptcore.framework" />
+        <framework src="SystemConfiguration.framework"/>
+        <framework src="CoreLocation.framework"/>
+        <framework src="Security.framework"/>
+    </platform>
+</plugin>
