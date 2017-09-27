@@ -1,6 +1,6 @@
 {
   "name": "cordova-plugin-gaode-location",
-  "version": "1.6.4",
+  "version": "1.8.2",
   "description": "基于cordova封装的高德地图定位插件",
   "cordova": {
     "id": "cordova-plugin-gaode-location",
