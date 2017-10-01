@@ -30,18 +30,10 @@ Android端和iOS端各自有各自的参数
 
 ## iOS
 
-- accuracy(int)：定位精度(具体对应的模式参考官网)，默认：1
-  - 1：kCLLocationAccuracyBest
-  - 2：kCLLocationAccuracyNearestTenMeters
-  - 3：kCLLocationAccuracyHundredMeters
-  - 4：kCLLocationAccuracyKilometer
-  - 5：kCLLocationAccuracyThreeKilometers
-- enablePausesLocationUpdatesAutomatically：是否允许系统暂停定位，默认：false
-- enableAllowsBackgroundLocationUpdates：是否允许在后台定位
-- locationTimeout(int，毫秒)：网络请求超时时间，默认：10000
-- reGeocodeTimeout(int，毫秒)：逆地址请求超时时间，默认：10000
-- enableDetectRiskOfFakeLocation：是否开启虚拟定位风险监控，默认：false
+- updateDistance(number)：设定最小更新距离，默认：200
 - needAddress(boolean)：是否返回逆地址信息，默认：false
+
+*注意：由于单次定位的响应时间过于漫长，iOS已经改成了默认是持续定位，android目前缺省还是单次定位，如果也要改成持续定位，将`onceLocation`改成`true`即可*
 
 # Success return data
 

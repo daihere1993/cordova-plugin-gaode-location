@@ -33,9 +33,22 @@
         self.locationManager = [[AMapLocationManager alloc] init];
         [self.locationManager setDelegate:self];
         // 设置定位最小更新距离，单位米
-        [self.locationManager setDistanceFilter:200];
+        double updateDistance;
+        if ([iosPara objectForKey:@"updateDistance"]) {
+            updateDistance = [[iosPara objectForKey:@"updateDistance"] doubleValue];
+        } else {
+            updateDistance = 200;
+        }
+        
+        [self.locationManager setDistanceFilter:updateDistance];
         // 设置是否返回逆地址编码信息
-        [self.locationManager setLocatingWithReGeocode:NO];
+        BOOL needsAddress;
+        if ([iosPara objectForKey:@"needsAddress"]) {
+            needsAddress = [[iosPara objectForKey:@"needsAddress"] boolValue];
+        } else {
+            needsAddress = NO;
+        }
+        [self.locationManager setLocatingWithReGeocode:needsAddress];
         // 开启持续定位
         [self.locationManager startUpdatingLocation];
     }];
@@ -47,11 +60,19 @@
     NSLog(@"%s, amapLocationManager = %@, error = %@", __func__, [manager class], error);
 }
 
-- (void)amapLocationManager:(AMapLocationManager *)manager didUpdateLocation:(CLLocation *)location {
+- (void)amapLocationManager:(AMapLocationManager *)manager didUpdateLocation:(CLLocation *)location reGeocode:(AMapLocationReGeocode *)reGeocode {
     NSNumber *latitude = [[NSNumber alloc] initWithDouble:location.coordinate.latitude];
     NSNumber *longitude = [[NSNumber alloc] initWithDouble:location.coordinate.longitude];
     
     NSMutableDictionary *locationInfo = [[NSMutableDictionary alloc] initWithObjectsAndKeys:[latitude stringValue], @"latitude", [longitude stringValue], @"longitude", nil];
+    
+    if (reGeocode) {
+        [locationInfo setValue:reGeocode.formattedAddress forKey:@"address"];
+        [locationInfo setValue:reGeocode.country forKey:@"country"];
+        [locationInfo setValue:reGeocode.province forKey:@"province"];
+        [locationInfo setValue:reGeocode.city forKey:@"city"];
+        [locationInfo setValue:reGeocode.district forKey:@"district"];
+    }
     
     CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:locationInfo];
     [self.commandDelegate sendPluginResult:pluginResult callbackId:self.currentCallbackId];
