@@ -33,7 +33,7 @@ Android端和iOS端各自有各自的参数
 - updateDistance(number)：设定最小更新距离，默认：200
 - needAddress(boolean)：是否返回逆地址信息，默认：false
 
-*注意：由于单次定位的响应时间过于漫长，iOS已经改成了默认是持续定位，android目前缺省还是单次定位，如果也要改成持续定位，将`onceLocation`改成`true`即可*
+**注意：由于单次定位的响应时间过于漫长，iOS已经改成了默认是持续定位，android目前缺省还是单次定位，如果也要改成持续定位，将`onceLocation`改成`true`即可**
 
 # Success return data
 
@@ -45,7 +45,7 @@ Android端和iOS端各自有各自的参数
 - district：区
 - address：具体地址
 
-__注：needAddress设为false，则只会返回经度和纬度__
+**注：`needAddress`缺省设为`false`，只会返回经度和纬度，需要逆地址则设为`true`**
 
 # Useage
 
