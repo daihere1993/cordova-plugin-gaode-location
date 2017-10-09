@@ -61,7 +61,19 @@
         </config-file>
 
         <config-file target="*-Info.plist" parent="NSLocationAlwaysUsageDescription">
-            <string>表示应用在前台和后台（suspend 或 terminated）都可以获取到更新的位置数据</string>
+            <string>需要定位</string>
+        </config-file>
+        <config-file target="*-Info.plist" parent="NSLocationWhenInUseUsageDescription">
+            <string>需要定位</string>
+        </config-file>
+        <config-file target="*-Info.plist" parent="NSLocationAlwaysAndWhenInUseUsageDescription">
+            <string>需要定位</string>
+        </config-file>
+        <config-file target="*-Info.plist" parent="NSAppTransportSecurity">
+          <dict>
+              <key>NSAllowsArbitraryLoads</key>
+              <true/>
+          </dict>
         </config-file>
 
         <!-- Plugin source code -->
