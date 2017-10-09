@@ -66,6 +66,12 @@
     
     NSMutableDictionary *locationInfo = [[NSMutableDictionary alloc] initWithObjectsAndKeys:[latitude stringValue], @"latitude", [longitude stringValue], @"longitude", nil];
     
+    BOOL isReGeocoding = manager.locatingWithReGeocode;
+    
+    if (!reGeocode && isReGeocoding) {
+        return;
+    }
+
     if (reGeocode) {
         [locationInfo setValue:reGeocode.formattedAddress forKey:@"address"];
         [locationInfo setValue:reGeocode.country forKey:@"country"];
