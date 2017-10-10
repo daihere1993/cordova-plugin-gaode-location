@@ -22,7 +22,7 @@ Android端和iOS端各自有各自的参数
 - httpTimeout(int， 毫秒)：网络请求超时时间，默认：10000
 - interval(int，毫秒)：定位间隔时间，默认：2000
 - needAddress(boolean)：是否返回逆地址信息，默认：false
-- onceLocation(boolean)：是否单次定位，默认：true
+- onceLocation(boolean)：是否单次定位，默认：false
 - onceLocationLatest(boolean)：是否等待wifi刷新，如果是作为true，会自动变为单次定位，持续定位时不要使用，默认：false
 - enableHtpps(boolean)：是否启用https，默认：false
 - enableWifiScan(boolean)：是否开启wifi扫描，如果设置为false会同时停止主动刷新，停止以后完全依赖于系统刷新，定位为止可能存在误差，默认：true
@@ -50,14 +50,6 @@ Android端和iOS端各自有各自的参数
 # Useage
 
 ```Javascript
-// 使用默认参数
-GaodeLocation(function (locationInfo) {
-  // do something
-}, function (err) {
-  console.log(err);
-});
-
-
 // 定制参数
 var para = {
   android: {
@@ -67,7 +59,15 @@ var para = {
     // set some parameters
   }
 }
-GaodeLocation(para, function (locationInfo) {
+// 啟動手機定位
+GaodeLocation.startUpdateLocation(para, function (successMsg) {
+  // do something
+}, function (err) {
+  console.log(err);
+});
+
+// 在啟動手機定位后即可通過'getLocation'隨時獲取最新的位置信息
+GaodeLocation.getLocation(function (locationInfo) {
   // do something
 }, function (err) {
   console.log(err);

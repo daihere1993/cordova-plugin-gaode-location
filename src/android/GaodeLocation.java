@@ -4,6 +4,8 @@ package daihere.cordova.plugin;
  * Created by daihere on 08/08/2017.
  */
 
+import android.telecom.Call;
+
 import org.apache.cordova.CordovaPlugin;
 import org.apache.cordova.CallbackContext;
 import org.apache.cordova.CordovaArgs;
@@ -21,7 +23,10 @@ import java.util.Map;
 
 public class GaodeLocation extends CordovaPlugin {
 
-    public void getLocation(final CordovaArgs args, final CallbackContext callbackContext) {
+    protected JSONObject locationInfo = new JSONObject();
+    protected  boolean isStartUpdateLocation = false;
+
+    public void startUpdateLocation(final  CordovaArgs args, final CallbackContext callbackContext) {
         // 初始化Client
         final AMapLocationClient locationClient = new AMapLocationClient(this.cordova.getActivity().getApplication());
         // 获取初始化定位参数
@@ -36,6 +41,7 @@ public class GaodeLocation extends CordovaPlugin {
             callbackContext.error("参数格式错误");
             return;
         }
+
         AMapLocationClientOption locationClientOption = getOption(androidPara, callbackContext);
         // 设置定位参数
         locationClient.setLocationOption(locationClientOption);
@@ -45,7 +51,6 @@ public class GaodeLocation extends CordovaPlugin {
             public void onLocationChanged(AMapLocation location) {
                 if (null != location) {
                     if (location.getErrorCode() == 0) {
-                        JSONObject locationInfo = new JSONObject();
                         try {
                             // 纬度
                             locationInfo.put("latitude", location.getLatitude());
@@ -61,8 +66,8 @@ public class GaodeLocation extends CordovaPlugin {
                             locationInfo.put("district", location.getDistrict());
                             // 地址
                             locationInfo.put("address", location.getAddress());
+                            callbackContext.success("success");
 
-                            callbackContext.success(locationInfo);
                         } catch (JSONException e) {
                             callbackContext.error("参数错误，请检查参数格式");
                         }
@@ -80,6 +85,15 @@ public class GaodeLocation extends CordovaPlugin {
         });
 
         locationClient.startLocation();
+        this.isStartUpdateLocation = true;
+    }
+
+    public void getLocation(final CordovaArgs args, final CallbackContext callbackContext) {
+        if (this.isStartUpdateLocation) {
+            callbackContext.success(locationInfo);
+        } else {
+            callbackContext.error("Please invoke 'startUpdateLocation' first.");
+        }
     }
 
     private AMapLocationClientOption getOption(JSONObject para, CallbackContext callbackContext) {
@@ -121,7 +135,7 @@ public class GaodeLocation extends CordovaPlugin {
             // 设置是否返回逆地地理信息
             mOption.setNeedAddress(para.isNull("needAddress") ? false: para.getBoolean("needAddress"));
             // 设置是否单次定位
-            mOption.setOnceLocation(para.isNull("onceLocation") ? true : para.getBoolean("onceLocation"));
+            mOption.setOnceLocation(para.isNull("onceLocation") ? false : para.getBoolean("onceLocation"));
             // 设置是否等待wifi刷新，如果是作为true，会自动变为单次定位，持续定位时不要使用
             mOption.setOnceLocationLatest(para.isNull("onceLocationLatest") ? false : para.getBoolean("onceLocationLatest"));
             // 设置网络请求协议，可选HTTP或者HTTPS
@@ -142,6 +156,9 @@ public class GaodeLocation extends CordovaPlugin {
     public boolean execute(String action, CordovaArgs args, CallbackContext callbackContext) throws JSONException {
         if (action.equals("getLocation")) {
             getLocation(args, callbackContext);
+            return true;
+        } else if (action.equals("startUpdateLocation")) {
+            startUpdateLocation(args, callbackContext);
             return true;
         }
 
