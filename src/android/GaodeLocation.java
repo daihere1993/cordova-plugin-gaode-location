@@ -1,11 +1,5 @@
 package daihere.cordova.plugin;
 
-/**
- * Created by daihere on 08/08/2017.
- */
-
-import android.telecom.Call;
-
 import org.apache.cordova.CordovaPlugin;
 import org.apache.cordova.CallbackContext;
 import org.apache.cordova.CordovaArgs;
@@ -19,21 +13,36 @@ import com.amap.api.location.AMapLocationListener;
 import com.amap.api.location.AMapLocationClientOption.AMapLocationMode;
 
 import java.util.HashMap;
-import java.util.Map;
+
+import android.os.Build;
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 
 public class GaodeLocation extends CordovaPlugin {
 
     protected JSONObject locationInfo = new JSONObject();
     protected  boolean isStartUpdateLocation = false;
+    public  Context context = null;
+    private static final boolean IS_AT_LEAST_LOLLIPOP = Build.VERSION.SDK_INT >= 21;
 
     public void startUpdateLocation(final  CordovaArgs args, final CallbackContext callbackContext) {
+        context = IS_AT_LEAST_LOLLIPOP ? cordova.getActivity().getWindow().getContext() : cordova.getActivity().getApplicationContext();
         // 初始化Client
-        final AMapLocationClient locationClient = new AMapLocationClient(this.cordova.getActivity().getApplication());
+        final AMapLocationClient locationClient = new AMapLocationClient(context);
         // 获取初始化定位参数
         final JSONObject para;
+        final String appName;
         JSONObject androidPara = new JSONObject();
         try {
             para = args.getJSONObject(0);
+
+            if (!para.isNull("appName")) {
+                appName = para.getString("appName");
+            } else {
+                appName = "当前应用";
+            }
+
             if (!para.isNull("android")) {
                 androidPara = para.getJSONObject("android");
             }
@@ -78,7 +87,11 @@ public class GaodeLocation extends CordovaPlugin {
                         sb.append("错误信息" + location.getErrorInfo() + "\n");
                         sb.append("错误描述" + location.getLocationDetail() + "\n");
 
-                        callbackContext.error(sb.toString());
+                        if (location.getErrorCode() == 12) {
+                            echo("缺少定位权限", "定位权限被禁用，请授予应用【" + appName + "】定位权限", "确定", context);
+                        } else {
+                            callbackContext.error(sb.toString());
+                        }
                     }
                 }
             }
@@ -86,6 +99,21 @@ public class GaodeLocation extends CordovaPlugin {
 
         locationClient.startLocation();
         this.isStartUpdateLocation = true;
+    }
+
+    public void echo(String title, String message, String buttonText, Context context) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setTitle(title);
+        builder.setMessage(message);
+        builder.setCancelable(true);
+        builder.setNegativeButton(buttonText, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+        AlertDialog dialog=builder.create();
+        dialog.show();
     }
 
     public void getLocation(final CordovaArgs args, final CallbackContext callbackContext) {
