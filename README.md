@@ -52,6 +52,7 @@ Android端和iOS端各自有各自的参数
 ```Javascript
 // 定制参数
 var para = {
+  appName: 'your app name',
   android: {
     // set some parameters
   },
