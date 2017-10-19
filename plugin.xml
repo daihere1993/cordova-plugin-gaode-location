@@ -44,17 +44,17 @@
                 <param name="ios-package" value="CDVGaodeLocation"/>
                 <param name="onload" value="true"/>
             </feature>
-            <preference name="IOSKEY" value="$IOSKEY" />
+            <preference name="GAODEKEY" value="gaode$IOSKEY" />
         </config-file>
 
         <config-file target="*-Info.plist" parent="CFBundleURLTypes">
             <array>
                 <dict>
                     <key>CFBundleURLName</key>
-                    <string>iosKey</string>
+                    <string>GAODEKEY</string>
                     <key>CFBundleURLSchemes</key>
                     <array>
-                        <string>$IOSKEY</string>
+                        <string>gaode$IOSKEY</string>
                     </array>
                 </dict>
             </array>

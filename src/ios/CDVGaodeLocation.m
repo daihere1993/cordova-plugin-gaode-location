@@ -40,7 +40,8 @@
         self.currentCallbackId = command.callbackId;
         
         // 初始化Key
-        NSString *key = [[self.commandDelegate settings] objectForKey:@"ioskey"];
+        NSString *key = [[self.commandDelegate settings] objectForKey:@"gaodekey"];
+        key = [key substringFromIndex:5];
         [AMapServices sharedServices].apiKey = key;
         
         self.locationManager = [[AMapLocationManager alloc] init];
