@@ -12,12 +12,19 @@ import com.amap.api.location.AMapLocationClientOption;
 import com.amap.api.location.AMapLocationListener;
 import com.amap.api.location.AMapLocationClientOption.AMapLocationMode;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
+import android.Manifest;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Build;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.provider.Settings;
 
 public class GaodeLocation extends CordovaPlugin {
 
@@ -26,6 +33,20 @@ public class GaodeLocation extends CordovaPlugin {
     public  Context context = null;
     private static final boolean IS_AT_LEAST_LOLLIPOP = Build.VERSION.SDK_INT >= 21;
 
+    // 权限申请码
+    private static final int PERMISSION_REQUEST_CODE = 500;
+
+    // 需要进行检测的权限数组
+    protected String[] needPermissions = {
+            Manifest.permission.ACCESS_COARSE_LOCATION,
+            Manifest.permission.ACCESS_FINE_LOCATION
+    };
+
+    /**
+     * 判断是否需要检测，防止不停的弹框
+     */
+    private boolean isNeedCheck = true;
+
     public void startUpdateLocation(final  CordovaArgs args, final CallbackContext callbackContext) {
         context = IS_AT_LEAST_LOLLIPOP ? cordova.getActivity().getWindow().getContext() : cordova.getActivity().getApplicationContext();
         // 初始化Client
@@ -33,6 +54,7 @@ public class GaodeLocation extends CordovaPlugin {
         // 获取初始化定位参数
         final JSONObject para;
         final String appName;
+        final int errorCode;
         JSONObject androidPara = new JSONObject();
         try {
             para = args.getJSONObject(0);
@@ -86,12 +108,6 @@ public class GaodeLocation extends CordovaPlugin {
                         sb.append("错误码" + location.getErrorCode() + "\n");
                         sb.append("错误信息" + location.getErrorInfo() + "\n");
                         sb.append("错误描述" + location.getLocationDetail() + "\n");
-
-                        if (location.getErrorCode() == 12) {
-                            echo("缺少定位权限", "定位权限被禁用，请授予应用【" + appName + "】定位权限", "确定", context);
-                        } else {
-                            callbackContext.error(sb.toString());
-                        }
                     }
                 }
             }
@@ -101,19 +117,44 @@ public class GaodeLocation extends CordovaPlugin {
         this.isStartUpdateLocation = true;
     }
 
-    public void echo(String title, String message, String buttonText, Context context) {
+    /**
+     * 显示提示信息
+     */
+    private void showMissingPermissionDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
-        builder.setTitle(title);
-        builder.setMessage(message);
-        builder.setCancelable(true);
-        builder.setNegativeButton(buttonText, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.cancel();
-            }
-        });
-        AlertDialog dialog=builder.create();
-        dialog.show();
+        builder.setTitle("提示");
+        builder.setMessage("当前应用缺少必要权限。\\n\\n请点击\\\"设置\\\"-\\\"权限\\\"-打开所需权限。");
+
+        // 拒绝, 退出应用
+        builder.setNegativeButton("取消",
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+//                        finish();
+                    }
+                });
+
+        builder.setPositiveButton("设置",
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        startAppSettings();
+                    }
+                });
+
+        builder.setCancelable(false);
+
+        builder.show();
+    }
+
+    /**
+     *  启动应用的设置
+     */
+    private void startAppSettings() {
+        Intent intent = new Intent(
+                Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+//        intent.setData(Uri.parse("package:" + getPackageName()));
+//        startActivity(intent);
     }
 
     public void getLocation(final CordovaArgs args, final CallbackContext callbackContext) {
@@ -186,11 +227,84 @@ public class GaodeLocation extends CordovaPlugin {
             getLocation(args, callbackContext);
             return true;
         } else if (action.equals("startUpdateLocation")) {
-            startUpdateLocation(args, callbackContext);
+            if (this.isNeedCheckPermissions(needPermissions)) {
+                this.checkPermissions(needPermissions);
+            } else {
+                startUpdateLocation(args, callbackContext);
+            }
             return true;
         }
 
         return false;
     }
-}
 
+    /**
+     * 检查权限
+     */
+
+    private void checkPermissions(String... permissions) {
+        try {
+            List<String> needRequestPermissionList = findNeedPermissions(permissions);
+            if (null != needRequestPermissionList && needRequestPermissionList.size() > 0) {
+                String[] array = needRequestPermissionList.toArray(new String[needRequestPermissionList.size()]);
+                cordova.requestPermissions(this, PERMISSION_REQUEST_CODE, array);
+            }
+        } catch (Throwable e) {
+
+        }
+    }
+
+    /**
+     * 判断是否需要权限校验
+     */
+    private boolean isNeedCheckPermissions(String... permission) {
+        List<String> needRequestPermissionList = findNeedPermissions(permission);
+        if (null != needRequestPermissionList && needRequestPermissionList.size() > 0) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * 获取需要获取权限的集合
+     */
+    private  List<String> findNeedPermissions(String[] permissions) {
+        List<String> needRequestPermissionList = new ArrayList<String>();
+        try {
+            for (String perm : permissions) {
+                if (!cordova.hasPermission(perm)) {
+                    needRequestPermissionList.add(perm);
+                }
+            }
+        } catch (Throwable e) {
+
+        }
+        return needRequestPermissionList;
+    }
+
+    /**
+     * 权限检测回调
+     */
+    public void onRequestPermissionsResult(int requestCode,
+                                           String[] permissions, int[] paramArrayOfInt) {
+        if (requestCode == PERMISSION_REQUEST_CODE) {
+            if (!verifyPermissions(paramArrayOfInt)) {
+                showMissingPermissionDialog();
+                isNeedCheck = false;
+            }
+        }
+    }
+
+    /**
+     * 检测是否所有的权限都已经授权
+     */
+    private boolean verifyPermissions(int[] grantResults) {
+        for (int result : grantResults) {
+            if (result != PackageManager.PERMISSION_GRANTED) {
+                return false;
+            }
+        }
+        return true;
+    }
+}
