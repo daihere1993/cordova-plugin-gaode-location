@@ -81,11 +81,11 @@ public class GaodeLocation extends CordovaPlugin {
         // 获取初始化定位参数
         JSONObject params;
         String appName;
-        JSONObject androidPara = new JSONObject();
+        JSONObject androidPara;
         try {
             params = args.getJSONObject(0);
             appName = params.has("appName") ? params.getString("appName") : "当前应用";
-            androidPara = params.getJSONObject("android");
+            androidPara = params.has("android") params.getJSONObject("android") : new JSONObject();
         } catch (JSONException e) {
             callbackContext.error("参数格式错误");
             return;
@@ -127,7 +127,7 @@ public class GaodeLocation extends CordovaPlugin {
     AMapLocationListener locationListener = new AMapLocationListener() {
         @Override
         public void onLocationChanged(AMapLocation location) {
-            JSONObject locationInfo = null;
+            JSONObject locationInfo = new JSONObject();
             if (null != location) {
                 if (location.getErrorCode() == 0) {
                     try {
