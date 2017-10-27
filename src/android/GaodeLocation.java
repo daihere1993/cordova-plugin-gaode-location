@@ -35,8 +35,6 @@ public class GaodeLocation extends CordovaPlugin {
     public AMapLocationClient locationClient = null;
     // 定位参数
     public AMapLocationClientOption locationOption = null;
-    // 定位信息
-    public JSONObject locationInfo = null;
     // JS回掉接口对象
     public static CallbackContext cb = null;
     // 权限申请码
@@ -129,6 +127,7 @@ public class GaodeLocation extends CordovaPlugin {
     AMapLocationListener locationListener = new AMapLocationListener() {
         @Override
         public void onLocationChanged(AMapLocation location) {
+            JSONObject locationInfo = null;
             if (null != location) {
                 if (location.getErrorCode() == 0) {
                     try {
@@ -180,17 +179,14 @@ public class GaodeLocation extends CordovaPlugin {
                 case 2: mode = AMapLocationMode.Device_Sensors; break;
                 case 3: mode = AMapLocationMode.Battery_Saving; break;
             }
-            // 是否gps优先，只有在高精度下有效，默认为true
-            Boolean gpsFirst = params.has("gpsFirst") ? params.getBoolean("gpsFirst") : true;
-            // 超时时间，仅在设备模式下无效，初始为3秒
-            long timeOut = params.has("timeOut") ? params.getLong("timeOut") : 3000;
+            // 超时时间，仅在设备模式下无效，初始为30秒
+            long timeOut = params.has("timeOut") ? params.getLong("timeOut") : 30000;
             // 是否单次定位，目前暂时只支持单次定位
             Boolean onceLocation = true;
             // 是否等待wife刷新
             Boolean onceLocationLatest = true;
 
             mOption.setLocationMode(mode);
-            mOption.setGpsFirst(gpsFirst);
             mOption.setHttpTimeOut(timeOut);
             mOption.setOnceLocation(onceLocation);
             mOption.setOnceLocationLatest(onceLocationLatest);
