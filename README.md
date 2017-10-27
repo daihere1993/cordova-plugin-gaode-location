@@ -30,6 +30,8 @@ Android端和iOS端各自有各自的参数
   - 4: kCLLocationAccuracyHundredMeters
   - 5: kCLLocationAccuracyKilometer
   - 6: kCLLocationAccuracyThreeKilometers
+- locationTimeout：定位超时时间，默认：3
+- reGeoCodeTimeout：逆地址超时时间，默认：5
 
   ## getLocation方法
 

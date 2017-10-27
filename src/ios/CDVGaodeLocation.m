@@ -2,13 +2,13 @@
  * @Author: 玖叁(N.T) 
  * @Date: 2017-10-25 17:37:18 
  * @Last Modified by: 玖叁(N.T)
- * @Last Modified time: 2017-10-27 10:00:14
+ * @Last Modified time: 2017-10-27 10:20:08
  */
 
 #import "CDVGaodeLocation.h"
 #import <AMapFoundationKit/AMapFoundationKit.h>
 
-#define DefaultLocationTimeout 2
+#define DefaultLocationTimeout 3
 #define DefaultReGeocodeTimeout 5
 
 @interface CDVGaodeLocation () <AMapLocationManagerDelegate>
