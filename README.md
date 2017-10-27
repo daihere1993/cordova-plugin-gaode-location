@@ -1,6 +1,6 @@
 # cordova-plugin-gaode-location
 
-基于cordova封装的高德地图定位插件
+基于cordova封装的高德地图定位插件(暂时只支持单次定位)
 
 # Install
 
@@ -12,28 +12,28 @@ ionic plugin add cordova-plugin-gaode-location --variable ANDROIDKEY=YOU_ANDROID
 
 Android端和iOS端各自有各自的参数
 
-## Android:
+## configLocation方法
 
-- locationMode(int)：定位的模式(具体对应的模式参考官网)，默认： 1
+### Android:
+
+- locationMode(number)：定位的模式（精度逐级递减，具体对应的模式参考官网），默认： 1
   - 1：Hight_Accuracy
   - 2：Device_Sensors
   - 3：Battery_Saving
-- gpsFirst(boolean)：是否GPS优先，默认： true
-- httpTimeout(int， 毫秒)：网络请求超时时间，默认：10000
-- interval(int，毫秒)：定位间隔时间，默认：2000
-- needAddress(boolean)：是否返回逆地址信息，默认：false
-- onceLocation(boolean)：是否单次定位，默认：false
-- onceLocationLatest(boolean)：是否等待wifi刷新，如果是作为true，会自动变为单次定位，持续定位时不要使用，默认：false
-- enableHtpps(boolean)：是否启用https，默认：false
-- enableWifiScan(boolean)：是否开启wifi扫描，如果设置为false会同时停止主动刷新，停止以后完全依赖于系统刷新，定位为止可能存在误差，默认：true
-- enableLocationCache(boolean)：是否使用缓存定位，默认：true
 
-## iOS
+### iOS
 
-- updateDistance(number)：设定最小更新距离，默认：200
-- needAddress(boolean)：是否返回逆地址信息，默认：false
+- accuracy(number)：定位精度（精度逐级递减，具体对应的模式参考官网），默认：4
+  - 1: kCLLocationAccuracyBestForNavigation
+  - 2: kCLLocationAccuracyBest
+  - 3: kCLLocationAccuracyNearestTenMeters
+  - 4: kCLLocationAccuracyHundredMeters
+  - 5: kCLLocationAccuracyKilometer
+  - 6: kCLLocationAccuracyThreeKilometers
 
-**注意：由于单次定位的响应时间过于漫长，iOS已经改成了默认是持续定位，android目前缺省还是单次定位，如果也要改成持续定位，将`onceLocation`改成`true`即可**
+  ## getLocation方法
+
+  - retGeo: 是否返回逆地址，默认：false
 
 # Success return data
 
@@ -44,8 +44,6 @@ Android端和iOS端各自有各自的参数
 - city：市
 - district：区
 - address：具体地址
-
-**注：`needAddress`缺省设为`false`，只会返回经度和纬度，需要逆地址则设为`true`**
 
 # Useage
 
@@ -60,15 +58,13 @@ var para = {
     // set some parameters
   }
 }
-// 啟動手機定位
-GaodeLocation.startUpdateLocation(para, function (successMsg) {
+// 配置手機定位
+GaodeLocation.configLocation(para, function (successMsg) {
   // do something
-}, function (err) {
-  console.log(err);
 });
 
 // 在啟動手機定位后即可通過'getLocation'隨時獲取最新的位置信息
-GaodeLocation.getLocation(function (locationInfo) {
+GaodeLocation.getLocation({ regGeo: true }, function (locationInfo) {
   // do something
 }, function (err) {
   console.log(err);

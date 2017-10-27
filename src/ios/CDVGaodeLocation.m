@@ -1,8 +1,8 @@
 /*
  * @Author: 玖叁(N.T) 
  * @Date: 2017-10-25 17:37:18 
- * @Last Modified by:   玖叁(N.T) 
- * @Last Modified time: 2017-10-25 17:37:18 
+ * @Last Modified by: 玖叁(N.T)
+ * @Last Modified time: 2017-10-27 10:00:14
  */
 
 #import "CDVGaodeLocation.h"
@@ -52,7 +52,7 @@
     
     // 设置期望的定位精度
     CLLocationAccuracy accuracy = kCLLocationAccuracyHundredMeters;
-    NSString *accuracyCode = [iosPara objectForKey:@"accuracy"];
+    NSString *accuracyCode = [[iosPara objectForKey:@"accuracy"] stringValue];
     
     if ([accuracyCode isEqualToString:@"1"]) {
         accuracy = kCLLocationAccuracyBestForNavigation;
