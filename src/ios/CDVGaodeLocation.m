@@ -52,7 +52,7 @@
     
     // 设置期望的定位精度
     CLLocationAccuracy accuracy = kCLLocationAccuracyHundredMeters;
-    NSString *accuracyCode = [[iosPara objectForKey:@"accuracy"] stringValue];
+    NSString *accuracyCode = [iosPara objectForKey:@"accuracy"];
     
     if ([accuracyCode isEqualToString:@"1"]) {
         accuracy = kCLLocationAccuracyBestForNavigation;
