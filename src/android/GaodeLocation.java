@@ -85,7 +85,7 @@ public class GaodeLocation extends CordovaPlugin {
         try {
             params = args.getJSONObject(0);
             appName = params.has("appName") ? params.getString("appName") : "当前应用";
-            androidPara = params.has("android") params.getJSONObject("android") : new JSONObject();
+            androidPara = params.has("android") ? params.getJSONObject("android") : new JSONObject();
         } catch (JSONException e) {
             callbackContext.error("参数格式错误");
             return;
