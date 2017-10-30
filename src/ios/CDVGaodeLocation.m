@@ -1,8 +1,8 @@
 /*
  * @Author: 玖叁(N.T) 
- * @Date: 2017-10-25 17:37:18 
+ * @Date: 2017-10-30 18:58:28 
  * @Last Modified by: 玖叁(N.T)
- * @Last Modified time: 2017-10-27 10:20:08
+ * @Last Modified time: 2017-10-30 18:59:43
  */
 
 #import "CDVGaodeLocation.h"
@@ -34,7 +34,7 @@
 - (void)configLocationManager:(CDVInvokedUrlCommand *)command {
     NSDictionary *iosPara;
     NSDictionary *param = [command.arguments objectAtIndex:0];
-    
+
     if ((NSNull *)param == [NSNull null]) {
         param = nil;
     } else {
@@ -94,6 +94,13 @@
     [self.locationManager setReGeocodeTimeout:reGeoCodeTimeout];
     
     [self successWithCallbackID:command.callbackId];
+    
+    // 判断当前 app 是否打开了定位权限
+    if ([CLLocationManager authorizationStatus] == kCLAuthorizationStatusDenied) {
+        //定位不能用
+        [self showLoctionSettingAlert];
+    }
+    
 }
 
 - (void)getLocation:(CDVInvokedUrlCommand *)command {
@@ -128,8 +135,9 @@
     {
         if (error != nil && error.code == AMapLocationErrorLocateFailed)
         {
-            [weakSelf showLoctionSettingAlert];
             //定位错误：此时location和regeocode没有返回值，不进行annotation的添加
+            NSString *errorMsg = [NSString stringWithFormat:@"定位错误:{%ld - %@};", (long)error.code, error.localizedDescription];
+            [weakSelf failWithCallbackID:weakSelf.currentCallbackId withMessage:errorMsg];
             NSLog(@"定位错误:{%ld - %@};", (long)error.code, error.localizedDescription);
             return;
         }
