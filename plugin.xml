@@ -60,14 +60,17 @@
             </array>
         </config-file>
 
+        <preference name="LOCATION_ALWAYS_USAGE_DESCRIPTION" default="请选择'始终允许'以保证应用的正常运行" />
         <config-file target="*-Info.plist" parent="NSLocationAlwaysUsageDescription">
-            <string>需要定位</string>
+            <string>$LOCATION_ALWAYS_USAGE_DESCRIPTION</string>
         </config-file>
+        <preference name="LOCATION_WHEN_IN_USAGE_DESCRIPTION" default="请选择'始终允许'以保证应用的正常运行" />
         <config-file target="*-Info.plist" parent="NSLocationWhenInUseUsageDescription">
-            <string>需要定位</string>
+            <string>$LOCATION_WHEN_IN_USAGE_DESCRIPTION</string>
         </config-file>
+        <preference name="LOCATION_ALWAYS_AND_WHEN_IN_USAGE_DESCRIPTION" default="请选择'始终允许'以保证应用的正常运行" />
         <config-file target="*-Info.plist" parent="NSLocationAlwaysAndWhenInUseUsageDescription">
-            <string>需要定位</string>
+            <string>$LOCATION_ALWAYS_AND_WHEN_IN_USAGE_DESCRIPTION</string>
         </config-file>
         <config-file target="*-Info.plist" parent="NSAppTransportSecurity">
           <dict>
