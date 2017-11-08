@@ -5,7 +5,7 @@
 # Install
 
 ```bash
-ionic plugin add cordova-plugin-gaode-location --variable ANDROIDKEY=YOU_ANDROIDKEY --variable IOSKEY=YOU_IOSKEY
+ionic plugin add https://github.com/daihere1993/cordova-plugin-gaode-location --variable ANDROIDKEY=YOU_ANDROIDKEY --variable IOSKEY=YOU_IOSKEY
 ```
 
 # Parameters
