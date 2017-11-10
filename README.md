@@ -71,7 +71,7 @@ GaodeLocation.configLocation(para, function (successMsg) {
 onLocationReady
   .promise
   .then(function () {
-    GaodeLocation.getLocation({ regGeo: true }, function (locationInfo) {
+    GaodeLocation.getLocation({ retGeo: true }, function (locationInfo) {
       // do something
     }, function (err) {
       console.log(err);
