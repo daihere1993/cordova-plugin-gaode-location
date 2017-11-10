@@ -50,6 +50,7 @@ Android端和iOS端各自有各自的参数
 # Useage
 
 ```Javascript
+var onLocationReady = $q.defer();
 // 定制参数
 var para = {
   appName: 'your app name',
@@ -63,12 +64,17 @@ var para = {
 // 配置手機定位
 GaodeLocation.configLocation(para, function (successMsg) {
   // do something
+  onLocationReady.resolve();
 });
 
-// 在啟動手機定位后即可通過'getLocation'隨時獲取最新的位置信息
-GaodeLocation.getLocation({ regGeo: true }, function (locationInfo) {
-  // do something
-}, function (err) {
-  console.log(err);
-});
+// 在啟動手機定位后即可通過'getLocation'隨時獲取最新的位置信息，注意一定要再手机定位启动成功之后执行，否则会报错
+onLocationReady
+  .promise
+  .then(function () {
+    GaodeLocation.getLocation({ regGeo: true }, function (locationInfo) {
+      // do something
+    }, function (err) {
+      console.log(err);
+    });
+  });
 ```
