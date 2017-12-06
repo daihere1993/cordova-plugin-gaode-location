@@ -57,9 +57,8 @@ public class GaodeLocation extends CordovaPlugin {
         } else if (action.equals("configLocationManager")) {
             if (this.isNeedCheckPermissions(needPermissions)) {
                 this.checkPermissions(needPermissions);
-            } else {
-                configLocationClient(args, callbackContext);
             }
+            configLocationClient(args, callbackContext);
             return true;
         }
 
