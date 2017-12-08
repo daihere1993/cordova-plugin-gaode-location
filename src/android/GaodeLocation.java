@@ -152,11 +152,15 @@ public class GaodeLocation extends CordovaPlugin {
                         cb.error("参数错误，请检查参数格式");
                     }
                 } else {
-                    StringBuffer sb = new StringBuffer();
-                    sb.append("定位失败" + "\n");
-                    sb.append("错误码" + location.getErrorCode() + "\n");
-                    sb.append("错误信息" + location.getErrorInfo() + "\n");
-                    sb.append("错误描述" + location.getLocationDetail() + "\n");
+                    JSONObject sb = new JSONObject();
+                    try {
+                        sb.put("errorCode", location.getErrorCode() + "\n");
+                        sb.put("errorInfo", location.getErrorInfo() + "\n");
+                        sb.put("errorDetail", location.getLocationDetail() + "\n");
+                    } catch (JSONException e) {
+                        cb.error("参数错误，请检查参数格式");
+                    }
+                    cb.error(sb);
                 }
             }
         }

@@ -137,7 +137,10 @@
         {
             //定位错误：此时location和regeocode没有返回值，不进行annotation的添加
             NSString *errorMsg = [NSString stringWithFormat:@"定位错误:{%ld - %@};", (long)error.code, error.localizedDescription];
-            [weakSelf failWithCallbackID:weakSelf.currentCallbackId withMessage:errorMsg];
+            NSDictionary *err = @{ @"errorCode": [NSString stringWithFormat:@"%ld", (long)error.code],
+                                   @"errorInfo": errorMsg
+                                   };
+            [weakSelf failWithCallbackID:weakSelf.currentCallbackId withDictionary:err];
             NSLog(@"定位错误:{%ld - %@};", (long)error.code, error.localizedDescription);
             return;
         }
@@ -151,7 +154,10 @@
         {
             //逆地理错误：在带逆地理的单次定位中，逆地理过程可能发生错误，此时location有返回值，regeocode无返回值，进行annotation的添加
             NSString *errorMsg = [NSString stringWithFormat:@"逆地理错误:{%ld - %@};", (long)error.code, error.localizedDescription];
-            [weakSelf failWithCallbackID:weakSelf.currentCallbackId withMessage:errorMsg];
+            NSDictionary *err = @{ @"errorCode": [NSString stringWithFormat:@"%ld", (long)error.code],
+                                   @"errorInfo": errorMsg
+                                   };
+            [weakSelf failWithCallbackID:weakSelf.currentCallbackId withDictionary:err];
             NSLog(@"%@", errorMsg);
         } else if (error != nil && error.code == AMapLocationErrorRiskOfFakeLocation) {
             NSString *errorMsg = [NSString stringWithFormat:@"存在虚拟定位的风险:{%ld - %@};", (long)error.code, error.localizedDescription];
@@ -237,6 +243,11 @@
 
 - (void)failWithCallbackID:(NSString *)callbackID withMessage:(NSString *)message {
     CDVPluginResult *commandResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:message];
+    [self.commandDelegate sendPluginResult:commandResult callbackId:callbackID];
+}
+
+- (void)failWithCallbackID:(NSString *)callbackID withDictionary:(NSDictionary *)dictionary {
+    CDVPluginResult *commandResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsDictionary:dictionary];
     [self.commandDelegate sendPluginResult:commandResult callbackId:callbackID];
 }
 

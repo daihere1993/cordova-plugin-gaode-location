@@ -20,8 +20,8 @@ module.exports = {
     },
     getLocation: function(param, success, error) {
         if (isFunction(param)) {
-            success = param;
             error = success;
+            success = param;
             param = null;
         }
         param = param || { retGeo: false };
